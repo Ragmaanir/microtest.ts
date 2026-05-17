@@ -22,12 +22,15 @@
     "check": "biome check . && tsc --noEmit",
     "format": "biome format --write .",
     "lint": "biome lint .",
+    "test": "tsx test/index.ts",
     "typecheck": "tsc --noEmit"
   },
   "packageManager": "pnpm@10.26.1",
   "devDependencies": {
     "@biomejs/biome": "^2.2.0",
+    "@types/node": "^24.0.0",
     "tundra": "github:Ragmaanir/tundra",
+    "tsx": "^4.20.5",
     "typescript": "^5.8"
   }
 }
