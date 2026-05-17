@@ -1,0 +1,33 @@
+{
+  "name": "microtest.ts",
+  "version": "1.0.0",
+  "description": "",
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist/**/*"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "check": "biome check . && tsc --noEmit",
+    "format": "biome format --write .",
+    "lint": "biome lint .",
+    "typecheck": "tsc --noEmit"
+  },
+  "packageManager": "pnpm@10.26.1",
+  "devDependencies": {
+    "@biomejs/biome": "^2.2.0",
+    "tundra": "github:Ragmaanir/tundra",
+    "typescript": "^5.8"
+  }
+}

@@ -1,0 +1,49 @@
+{
+  "files": {
+    "includes": [
+      "**",
+      "!node_modules",
+      "!build"
+    ]
+  },
+  "assist": {
+    "actions": {
+      "source": {
+        "organizeImports": "on"
+      }
+    }
+  },
+  "formatter": {
+    "enabled": false,
+    "indentStyle": "space",
+    "lineWidth": 120
+  },
+  "linter": {
+    "rules": {
+      "style": {
+        "useTemplate": "info",
+        "useImportType": "info",
+        "noInferrableTypes": "off",
+        "noNonNullAssertion": "off",
+        "noUselessElse": "off",
+        "noUnusedTemplateLiteral": "info",
+        "useConst": "warn"
+      },
+      "complexity": {
+        "noStaticOnlyClass": "off",
+        "useLiteralKeys": "info",
+        "noThisInStatic": "off",
+        "noForEach": "warn",
+        "noUselessConstructor": "warn",
+        "noUselessEmptyExport": "warn",
+        "useArrowFunction": "warn"
+      },
+      "suspicious": {
+        "noExplicitAny": "warn",
+        "noDoubleEquals": "warn",
+        "noAssignInExpressions": "info",
+        "noEmptyInterface": "info"
+      }
+    }
+  }
+}
