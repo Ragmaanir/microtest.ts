@@ -4,18 +4,29 @@ import {
   around,
   assert,
   before,
+  DOTS,
   Microtest,
-  progress_reporter,
+  ProgressReporter,
   suite,
+  TestStatus,
   test,
   type Writer,
 } from "../src/index.js"
+import "./reporters/description_reporter.js"
+import "./reporters/error_reporter.js"
+import "./reporters/progress_reporter.js"
+import "./reporters/slow_test_reporter.js"
+import "./reporters/summary_reporter.js"
 
 class MemoryWriter implements Writer {
   output = ""
 
   write(text: string) {
     this.output += text
+  }
+
+  writeln(text = "") {
+    this.output += `${text}\n`
   }
 }
 
@@ -69,14 +80,14 @@ suite("hooks", () => {
 suite("reporters", () => {
   test("#progress_reporter uses configurable symbols", async () => {
     const writer = new MemoryWriter()
-    const reporter = progress_reporter({ symbols: { passed: "P" } }, writer, false)
+    const reporter = new ProgressReporter({ symbols: { ...DOTS, [TestStatus.Passed]: "P" } }, writer, false)
 
     await reporter.test_result?.({
       result: {
         suite_name: "Thing",
         test_name: "#works",
         full_name: "Thing#works",
-        status: "passed",
+        status: TestStatus.Passed,
         duration_ms: 0,
       },
     })
