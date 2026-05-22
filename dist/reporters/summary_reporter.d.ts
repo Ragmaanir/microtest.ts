@@ -4,4 +4,5 @@ import { TerminalReporter } from "./terminal_reporter.js";
 export declare class SummaryReporter extends TerminalReporter {
     constructor(writer?: Writer);
     run_end(event: RunEndEvent): Promise<void>;
+    private write_count;
 }

@@ -1,4 +1,4 @@
-import type { RGB } from "../color.js";
+import { type RGB } from "../color.js";
 import { TestStatus } from "../results.js";
 import type { Writer } from "../writer.js";
 import { Reporter } from "./reporter.js";
@@ -7,6 +7,7 @@ export declare const DOTS: ResultSymbols;
 export declare const TICKS: ResultSymbols;
 export declare abstract class TerminalReporter extends Reporter {
     protected readonly writer: Writer;
+    static readonly DEFAULT_TEST_STATUS_COLORS: Record<TestStatus, RGB>;
     protected constructor(writer?: Writer);
     protected write(text: string, color?: RGB): Promise<void>;
     protected writeln(text?: string, color?: RGB): Promise<void>;

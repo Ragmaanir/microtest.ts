@@ -16,6 +16,23 @@ export class SummaryReporter extends TerminalReporter {
         for (const test_result of event.result.tests) {
             counts[test_result.status] += 1;
         }
-        await this.writeln(`seed ${event.result.seed} | ${counts.passed} passed, ${counts.failed} failed, ${counts.errored} errored, ${counts.skipped} skipped, ${counts.pending} pending`);
+        await this.write(`seed ${event.result.seed}`);
+        await this.write(` | ${event.result.duration_ms}ms`);
+        await this.write(" | ");
+        await this.write_count(counts, TestStatus.Passed, "passed");
+        await this.write(", ");
+        await this.write_count(counts, TestStatus.Failed, "failed");
+        await this.write(", ");
+        await this.write_count(counts, TestStatus.Errored, "errored");
+        await this.write(", ");
+        await this.write_count(counts, TestStatus.Skipped, "skipped");
+        await this.write(", ");
+        await this.write_count(counts, TestStatus.Pending, "pending");
+        await this.writeln();
+    }
+    async write_count(counts, status, label) {
+        const count = counts[status];
+        const color = count > 0 ? TerminalReporter.DEFAULT_TEST_STATUS_COLORS[status] : undefined;
+        await this.write(`${count} ${label}`, color);
     }
 }

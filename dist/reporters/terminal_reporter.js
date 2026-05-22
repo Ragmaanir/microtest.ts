@@ -1,3 +1,4 @@
+import { GREEN, RED, YELLOW } from "../color.js";
 import { TestStatus } from "../results.js";
 import { Reporter } from "./reporter.js";
 import { STDOUT_WRITER } from "./stdout_writer.js";
@@ -21,6 +22,13 @@ export const TICKS = {
 };
 export class TerminalReporter extends Reporter {
     writer;
+    static DEFAULT_TEST_STATUS_COLORS = {
+        [TestStatus.Passed]: GREEN,
+        [TestStatus.Failed]: RED,
+        [TestStatus.Errored]: RED,
+        [TestStatus.Skipped]: YELLOW,
+        [TestStatus.Pending]: YELLOW,
+    };
     constructor(writer = STDOUT_WRITER) {
         super();
         this.writer = writer;

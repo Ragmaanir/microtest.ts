@@ -1,4 +1,4 @@
-import type { RGB } from "../color.js"
+import { GREEN, RED, type RGB, YELLOW } from "../color.js"
 import { TestStatus } from "../results.js"
 import type { Writer } from "../writer.js"
 import { Reporter } from "./reporter.js"
@@ -28,6 +28,14 @@ export const TICKS: ResultSymbols = {
 }
 
 export abstract class TerminalReporter extends Reporter {
+  static readonly DEFAULT_TEST_STATUS_COLORS: Record<TestStatus, RGB> = {
+    [TestStatus.Passed]: GREEN,
+    [TestStatus.Failed]: RED,
+    [TestStatus.Errored]: RED,
+    [TestStatus.Skipped]: YELLOW,
+    [TestStatus.Pending]: YELLOW,
+  }
+
   protected constructor(protected readonly writer: Writer = STDOUT_WRITER) {
     super()
   }
