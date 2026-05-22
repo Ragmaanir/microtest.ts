@@ -36,7 +36,6 @@ export declare class ExecutionContext {
     private run_status_from_tests;
     private full_test_name;
     private run_suites;
-    private should_use_colors;
     private run_suite;
     private run_test;
 }

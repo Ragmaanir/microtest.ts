@@ -1,5 +1,5 @@
 import { Rand } from "./rand.js";
-import { ProgressReporter, STDOUT_WRITER, SummaryReporter, } from "./reporters.js";
+import { ProgressReporter, StdoutWriter, SummaryReporter, } from "./reporters.js";
 import { RunResult, SuiteResult, TestResult, TestStatus } from "./results.js";
 import { Suite } from "./suite.js";
 import { TestCase } from "./test_case.js";
@@ -102,9 +102,9 @@ export class ExecutionContext {
         }
         return wrapped;
     }
-    normalize_reporters(reporters, writer, use_colors) {
+    normalize_reporters(reporters, writer) {
         if (reporters === undefined) {
-            return [new ProgressReporter({}, writer, use_colors), new SummaryReporter(writer, use_colors)];
+            return [new ProgressReporter({}, writer), new SummaryReporter(writer)];
         }
         return reporters;
     }
@@ -123,9 +123,8 @@ export class ExecutionContext {
         const started_at = Date.now();
         const seed = this.make_seed(options.seed);
         const rand = new Rand(seed);
-        const writer = options.writer ?? STDOUT_WRITER;
-        const use_colors = this.should_use_colors(options.use_colors);
-        const reporters = this.normalize_reporters(options.reporters, writer, use_colors);
+        const writer = options.writer ?? StdoutWriter.default(options.use_colors);
+        const reporters = this.normalize_reporters(options.reporters, writer);
         const has_focus = this.suites.some((next_suite) => next_suite.tests.some((next_test) => next_test.focused));
         const suite_results = [];
         const test_results = [];
@@ -147,9 +146,6 @@ export class ExecutionContext {
             process.exitCode = 1;
         }
         return result;
-    }
-    should_use_colors(use_colors) {
-        return use_colors !== false && process.env.COLOR !== "0";
     }
     async run_suite(next_suite, reporters, has_focus, rand) {
         const suite_started_at = Date.now();

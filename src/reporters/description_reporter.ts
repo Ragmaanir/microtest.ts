@@ -1,7 +1,7 @@
 import { GREEN, RED, type RGB, YELLOW } from "../color.js"
 import type { SuiteStartEvent, TestResultEvent } from "../events.js"
 import { TestStatus } from "../results.js"
-import type { Writer } from "./reporter.js"
+import type { Writer } from "../writer.js"
 import { STDOUT_WRITER } from "./stdout_writer.js"
 import { type ResultSymbols, TerminalReporter, TICKS } from "./terminal_reporter.js"
 
@@ -9,10 +9,10 @@ export class DescriptionReporter extends TerminalReporter {
   private readonly symbols: ResultSymbols
 
   constructor(
-    options: { symbols?: ResultSymbols; use_colors?: boolean } = {},
+    options: { symbols?: ResultSymbols } = {},
     writer: Writer = STDOUT_WRITER,
   ) {
-    super(writer, options.use_colors)
+    super(writer)
     this.symbols = options.symbols ?? TICKS
   }
 

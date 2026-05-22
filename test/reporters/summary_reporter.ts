@@ -4,7 +4,7 @@ import { MemoryWriter, run_result } from "./helpers.js"
 suite("SummaryReporter", () => {
   test("#run_end writes counts for passed, failed, errored, and skipped results", async () => {
     const writer = new MemoryWriter()
-    const reporter = new SummaryReporter(writer, false)
+    const reporter = new SummaryReporter(writer)
 
     await reporter.run_end({ result: run_result() })
 

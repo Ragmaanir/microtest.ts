@@ -80,7 +80,7 @@ suite("hooks", () => {
 suite("reporters", () => {
   test("#progress_reporter uses configurable symbols", async () => {
     const writer = new MemoryWriter()
-    const reporter = new ProgressReporter({ symbols: { ...DOTS, [TestStatus.Passed]: "P" } }, writer, false)
+    const reporter = new ProgressReporter({ symbols: { ...DOTS, [TestStatus.Passed]: "P" } }, writer)
 
     await reporter.test_result?.({
       result: {

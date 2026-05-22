@@ -4,7 +4,7 @@ import { MemoryWriter, run_result } from "./helpers.js"
 suite("SlowTestReporter", () => {
   test("#run_end writes non-skipped results ordered by duration", async () => {
     const writer = new MemoryWriter()
-    const reporter = new SlowTestReporter(writer, false, 5)
+    const reporter = new SlowTestReporter(writer, 5)
 
     await reporter.run_end({ result: run_result() })
 

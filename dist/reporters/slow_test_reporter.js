@@ -3,8 +3,8 @@ import { STDOUT_WRITER } from "./stdout_writer.js";
 import { TerminalReporter } from "./terminal_reporter.js";
 export class SlowTestReporter extends TerminalReporter {
     limit;
-    constructor(writer = STDOUT_WRITER, use_colors, limit = 5) {
-        super(writer, use_colors);
+    constructor(writer = STDOUT_WRITER, limit = 5) {
+        super(writer);
         this.limit = limit;
     }
     async run_end(event) {

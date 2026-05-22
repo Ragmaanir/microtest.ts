@@ -4,7 +4,7 @@ import { all_results, MemoryWriter } from "./helpers.js"
 suite("ProgressReporter", () => {
   test("#test_result writes symbols for passed, failed, errored, and skipped results", async () => {
     const writer = new MemoryWriter()
-    const reporter = new ProgressReporter({ symbols: DOTS }, writer, false)
+    const reporter = new ProgressReporter({ symbols: DOTS }, writer)
 
     for (const result of all_results) {
       await reporter.test_result({ result })

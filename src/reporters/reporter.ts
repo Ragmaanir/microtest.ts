@@ -7,11 +7,6 @@ import type {
   TestStartEvent,
 } from "../events.js"
 
-export interface Writer {
-  write(text: string): void | Promise<void>
-  writeln(text?: string): void | Promise<void>
-}
-
 export abstract class Reporter {
   run_start?(event: RunStartEvent): void | Promise<void>
   suite_start?(event: SuiteStartEvent): void | Promise<void>
