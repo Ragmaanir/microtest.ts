@@ -4,8 +4,8 @@ import { STDOUT_WRITER } from "./stdout_writer.js";
 import { DOTS, TerminalReporter } from "./terminal_reporter.js";
 export class ProgressReporter extends TerminalReporter {
     symbols;
-    constructor(options = {}, writer = STDOUT_WRITER, use_colors) {
-        super(writer, use_colors);
+    constructor(options = {}, writer = STDOUT_WRITER) {
+        super(writer);
         this.symbols = options.symbols ?? DOTS;
     }
     async test_result(event) {

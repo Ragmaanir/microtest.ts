@@ -1,6 +1,7 @@
 import type { RGB } from "../color.js"
 import { TestStatus } from "../results.js"
-import { Reporter, type Writer } from "./reporter.js"
+import type { Writer } from "../writer.js"
+import { Reporter } from "./reporter.js"
 import { STDOUT_WRITER } from "./stdout_writer.js"
 
 export type ResultSymbols = Record<TestStatus, string>
@@ -27,21 +28,15 @@ export const TICKS: ResultSymbols = {
 }
 
 export abstract class TerminalReporter extends Reporter {
-  protected constructor(
-    protected readonly writer: Writer = STDOUT_WRITER,
-    use_colors?: boolean,
-  ) {
+  protected constructor(protected readonly writer: Writer = STDOUT_WRITER) {
     super()
-    this.use_colors = use_colors !== false && process.env.COLOR !== "0"
   }
 
-  protected readonly use_colors: boolean
-
   protected async write(text: string, color?: RGB): Promise<void> {
-    await this.writer.write(color?.colorize(text, this.use_colors) ?? text)
+    await this.writer.write(text, color)
   }
 
   protected async writeln(text = "", color?: RGB): Promise<void> {
-    await this.writer.writeln(color?.colorize(text, this.use_colors) ?? text)
+    await this.writer.writeln(text, color)
   }
 }

@@ -5,7 +5,7 @@ import { TerminalReporter, TICKS } from "./terminal_reporter.js";
 export class DescriptionReporter extends TerminalReporter {
     symbols;
     constructor(options = {}, writer = STDOUT_WRITER) {
-        super(writer, options.use_colors);
+        super(writer);
         this.symbols = options.symbols ?? TICKS;
     }
     async suite_start(event) {

@@ -1,16 +1,15 @@
 import type { RunEndEvent } from "../events.js"
 import { TestStatus } from "../results.js"
-import type { Writer } from "./reporter.js"
+import type { Writer } from "../writer.js"
 import { STDOUT_WRITER } from "./stdout_writer.js"
 import { TerminalReporter } from "./terminal_reporter.js"
 
 export class SlowTestReporter extends TerminalReporter {
   constructor(
     writer: Writer = STDOUT_WRITER,
-    use_colors?: boolean,
     private readonly limit = 5,
   ) {
-    super(writer, use_colors)
+    super(writer)
   }
 
   async run_end(event: RunEndEvent): Promise<void> {

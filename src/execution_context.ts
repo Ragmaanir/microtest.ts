@@ -2,7 +2,7 @@ import { Rand } from "./rand.js"
 import {
   ProgressReporter,
   type Reporter,
-  STDOUT_WRITER,
+  StdoutWriter,
   SummaryReporter,
   type Writer,
 } from "./reporters.js"
@@ -146,10 +146,9 @@ export class ExecutionContext {
   private normalize_reporters(
     reporters: Reporter[] | undefined,
     writer: Writer,
-    use_colors: boolean,
   ): Reporter[] {
     if (reporters === undefined) {
-      return [new ProgressReporter({}, writer, use_colors), new SummaryReporter(writer, use_colors)]
+      return [new ProgressReporter({}, writer), new SummaryReporter(writer)]
     }
 
     return reporters
@@ -175,9 +174,8 @@ export class ExecutionContext {
     const started_at = Date.now()
     const seed = this.make_seed(options.seed)
     const rand = new Rand(seed)
-    const writer = options.writer ?? STDOUT_WRITER
-    const use_colors = this.should_use_colors(options.use_colors)
-    const reporters = this.normalize_reporters(options.reporters, writer, use_colors)
+    const writer = options.writer ?? StdoutWriter.default(options.use_colors)
+    const reporters = this.normalize_reporters(options.reporters, writer)
     const has_focus = this.suites.some((next_suite) => next_suite.tests.some((next_test) => next_test.focused))
     const suite_results: SuiteResult[] = []
     const test_results: TestResult[] = []
@@ -214,10 +212,6 @@ export class ExecutionContext {
     }
 
     return result
-  }
-
-  private should_use_colors(use_colors: boolean | undefined): boolean {
-    return use_colors !== false && process.env.COLOR !== "0"
   }
 
   private async run_suite(

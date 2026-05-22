@@ -21,16 +21,14 @@ export const TICKS = {
 };
 export class TerminalReporter extends Reporter {
     writer;
-    constructor(writer = STDOUT_WRITER, use_colors) {
+    constructor(writer = STDOUT_WRITER) {
         super();
         this.writer = writer;
-        this.use_colors = use_colors !== false && process.env.COLOR !== "0";
     }
-    use_colors;
     async write(text, color) {
-        await this.writer.write(color?.colorize(text, this.use_colors) ?? text);
+        await this.writer.write(text, color);
     }
     async writeln(text = "", color) {
-        await this.writer.writeln(color?.colorize(text, this.use_colors) ?? text);
+        await this.writer.writeln(text, color);
     }
 }

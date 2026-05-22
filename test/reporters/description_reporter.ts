@@ -4,7 +4,7 @@ import { all_results, MemoryWriter } from "./helpers.js"
 suite("DescriptionReporter", () => {
   test("#test_result writes symbols for passed, failed, errored, and skipped results", async () => {
     const writer = new MemoryWriter()
-    const reporter = new DescriptionReporter({ symbols: TICKS, use_colors: false }, writer)
+    const reporter = new DescriptionReporter({ symbols: TICKS }, writer)
 
     await reporter.suite_start({ suite_name: "Reporter" })
 
