@@ -1,5 +1,3 @@
-import { GREEN, RED, YELLOW } from "../color.js";
-import { TestStatus } from "../results.js";
 import { STDOUT_WRITER } from "./stdout_writer.js";
 import { DOTS, TerminalReporter } from "./terminal_reporter.js";
 export class ProgressReporter extends TerminalReporter {
@@ -11,15 +9,7 @@ export class ProgressReporter extends TerminalReporter {
     async test_result(event) {
         const status = event.result.status;
         const symbol = this.symbols[status];
-        if (status === TestStatus.Passed) {
-            await this.write(symbol, GREEN);
-        }
-        else if (status === TestStatus.Failed || status === TestStatus.Errored) {
-            await this.write(symbol, RED);
-        }
-        else {
-            await this.write(symbol, YELLOW);
-        }
+        await this.write(symbol, TerminalReporter.DEFAULT_TEST_STATUS_COLORS[status]);
     }
     async run_end() {
         await this.writeln();

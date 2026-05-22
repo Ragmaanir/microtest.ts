@@ -8,6 +8,6 @@ suite("SummaryReporter", () => {
 
     await reporter.run_end({ result: run_result() })
 
-    assert.equal(writer.output, "seed reporter-seed | 1 passed, 1 failed, 1 errored, 1 skipped, 0 pending\n")
+    assert.equal(writer.output, "seed reporter-seed | 100ms | 1 passed, 1 failed, 1 errored, 1 skipped, 0 pending\n")
   })
 })

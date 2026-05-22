@@ -8,5 +8,4 @@ export declare class DescriptionReporter extends TerminalReporter {
     }, writer?: Writer);
     suite_start(event: SuiteStartEvent): Promise<void>;
     test_result(event: TestResultEvent): Promise<void>;
-    private result_color;
 }
