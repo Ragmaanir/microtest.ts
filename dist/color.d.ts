@@ -9,3 +9,7 @@ export declare const GREEN: RGB;
 export declare const RED: RGB;
 export declare const YELLOW: RGB;
 export declare const GRAY: RGB;
+export declare const DARK_GRAY: RGB;
+export declare const LIGHT_MAGENTA: RGB;
+export declare const MAGENTA: RGB;
+export declare const CYAN: RGB;

@@ -1,5 +1,17 @@
 import path from "node:path"
-import { assert, BacktracePrinter, suite, test } from "../src/index.js"
+import { assert, BacktracePrinter, suite, test, type Writer } from "../src/index.js"
+
+class MemoryWriter implements Writer {
+  output = ""
+
+  write(text: string) {
+    this.output += text
+  }
+
+  writeln(text = "") {
+    this.output += `${text}\n`
+  }
+}
 
 function generate_exception(message = "the message"): Error {
   return new Error(message)
@@ -15,7 +27,7 @@ suite("BacktracePrinter", () => {
     assert(trace.length > 0)
   })
 
-  test("#call prettifies paths", () => {
+  test("#call prettifies paths", async () => {
     const project = process.cwd()
     const raw_trace = [
       `    at generate_exception (${path.join(project, "test", "backtrace_printer.ts")}:5:10)`,
@@ -27,12 +39,15 @@ suite("BacktracePrinter", () => {
       "not a stack line",
     ]
 
-    const printer = new BacktracePrinter()
-    const pretty_trace = printer.call(raw_trace)
+    const writer = new MemoryWriter()
+    const printer = new BacktracePrinter(writer)
+
+    await printer.call(raw_trace)
+
     const separator = path.sep
 
     assert.equal(
-      pretty_trace,
+      writer.output,
       [
         "┏ NODE: node:internal/modules/run_main:101 anonymous",
         `┃ LIB: node_modules${separator}some-lib${separator}index.js:10 dependency`,
@@ -45,10 +60,12 @@ suite("BacktracePrinter", () => {
     )
   })
 
-  test("#call does not raise when path cannot be classified", () => {
-    const printer = new BacktracePrinter()
-    const pretty_trace = printer.call(["    at mystery (/tmp/outside.ts:1:2)"])
+  test("#call does not raise when path cannot be classified", async () => {
+    const writer = new MemoryWriter()
+    const printer = new BacktracePrinter(writer)
 
-    assert(pretty_trace.includes("???: /tmp/outside.ts:1 mystery"))
+    await printer.call(["    at mystery (/tmp/outside.ts:1:2)"])
+
+    assert(writer.output.includes("???: /tmp/outside.ts:1 mystery"))
   })
 })

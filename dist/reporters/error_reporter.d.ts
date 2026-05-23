@@ -5,5 +5,5 @@ export declare class ErrorReporter extends TerminalReporter {
     private readonly backtrace_printer;
     constructor(writer?: Writer);
     run_end(event: RunEndEvent): Promise<void>;
-    private error_message;
+    private write_error;
 }
