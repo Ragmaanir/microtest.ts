@@ -15,7 +15,6 @@ export declare class ExecutionContext {
     readonly global_after_hooks: HookFunction[];
     readonly global_around_hooks: AroundHookFunction[];
     current_suite: Suite | null;
-    run_scheduled: boolean;
     running: boolean;
     suite(name: string, fn: () => void): void;
     before(fn: HookFunction): void;
@@ -27,7 +26,6 @@ export declare class ExecutionContext {
     global_around(fn: AroundHookFunction): void;
     run(options?: RunOptions): Promise<RunResult>;
     private require_current_suite;
-    private schedule_run;
     private make_seed;
     private is_assertion_failure;
     private run_hooks;

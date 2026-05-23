@@ -8,6 +8,4 @@ export declare class MicrotestCli {
     private collect_target_files;
     private collect_directory_files;
     private is_test_file;
-    private disable_auto_run;
-    private restore_auto_run;
 }

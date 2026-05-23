@@ -24,14 +24,8 @@ export class MicrotestCli {
     const unregister = register()
 
     try {
-      const previous_auto_run = this.disable_auto_run()
-
-      try {
-        for (const file of files) {
-          await import(pathToFileURL(file).href)
-        }
-      } finally {
-        this.restore_auto_run(previous_auto_run)
+      for (const file of files) {
+        await import(pathToFileURL(file).href)
       }
 
       await run()
@@ -86,23 +80,6 @@ export class MicrotestCli {
 
   private is_test_file(file: string): boolean {
     return MicrotestCli.TEST_FILE_EXTENSIONS.has(path.extname(file)) && !file.endsWith(".d.ts")
-  }
-
-  private disable_auto_run(): string | undefined {
-    const previous_auto_run = process.env.MICROTEST_DISABLE_AUTO_RUN
-
-    process.env.MICROTEST_DISABLE_AUTO_RUN = "1"
-
-    return previous_auto_run
-  }
-
-  private restore_auto_run(previous_auto_run: string | undefined): void {
-    if (previous_auto_run === undefined) {
-      delete process.env.MICROTEST_DISABLE_AUTO_RUN
-      return
-    }
-
-    process.env.MICROTEST_DISABLE_AUTO_RUN = previous_auto_run
   }
 }
 

@@ -9,7 +9,6 @@ export class ExecutionContext {
     global_after_hooks = [];
     global_around_hooks = [];
     current_suite = null;
-    run_scheduled = false;
     running = false;
     suite(name, fn) {
         if (this.current_suite !== null) {
@@ -24,7 +23,6 @@ export class ExecutionContext {
             this.current_suite = null;
         }
         this.suites.push(next_suite);
-        this.schedule_run();
     }
     before(fn) {
         this.require_current_suite("before", "Microtest.before").before(fn);
@@ -52,7 +50,6 @@ export class ExecutionContext {
             throw new Error("microtest is already running");
         }
         this.running = true;
-        this.run_scheduled = true;
         try {
             return await this.run_suites(options);
         }
@@ -65,21 +62,6 @@ export class ExecutionContext {
             throw new Error(`${action} must be declared inside a suite. Use ${global_action} for global hooks`);
         }
         return this.current_suite;
-    }
-    schedule_run() {
-        if (process.env.MICROTEST_DISABLE_AUTO_RUN === "1") {
-            return;
-        }
-        if (this.run_scheduled) {
-            return;
-        }
-        this.run_scheduled = true;
-        setImmediate(() => {
-            void this.run().catch((error) => {
-                process.exitCode = 1;
-                console.error(error);
-            });
-        });
     }
     make_seed(seed) {
         return seed ?? process.env.SEED ?? String(Date.now());

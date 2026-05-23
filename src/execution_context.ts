@@ -26,7 +26,6 @@ export class ExecutionContext {
   readonly global_around_hooks: AroundHookFunction[] = []
 
   current_suite: Suite | null = null
-  run_scheduled = false
   running = false
 
   suite(name: string, fn: () => void): void {
@@ -44,7 +43,6 @@ export class ExecutionContext {
     }
 
     this.suites.push(next_suite)
-    this.schedule_run()
   }
 
   before(fn: HookFunction): void {
@@ -81,7 +79,6 @@ export class ExecutionContext {
     }
 
     this.running = true
-    this.run_scheduled = true
 
     try {
       return await this.run_suites(options)
@@ -96,25 +93,6 @@ export class ExecutionContext {
     }
 
     return this.current_suite
-  }
-
-  private schedule_run(): void {
-    if (process.env.MICROTEST_DISABLE_AUTO_RUN === "1") {
-      return
-    }
-
-    if (this.run_scheduled) {
-      return
-    }
-
-    this.run_scheduled = true
-
-    setImmediate(() => {
-      void this.run().catch((error: unknown) => {
-        process.exitCode = 1
-        console.error(error)
-      })
-    })
   }
 
   private make_seed(seed?: string): string {
