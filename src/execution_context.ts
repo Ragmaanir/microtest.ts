@@ -1,5 +1,6 @@
 import { Rand } from "./rand.js"
 import {
+  ErrorReporter,
   ProgressReporter,
   type Reporter,
   StdoutWriter,
@@ -148,7 +149,7 @@ export class ExecutionContext {
     writer: Writer,
   ): Reporter[] {
     if (reporters === undefined) {
-      return [new ProgressReporter({}, writer), new SummaryReporter(writer)]
+      return [new ProgressReporter({}, writer), new ErrorReporter(writer), new SummaryReporter(writer)]
     }
 
     return reporters

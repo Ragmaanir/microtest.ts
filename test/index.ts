@@ -12,6 +12,7 @@ import {
   test,
   type Writer,
 } from "../src/index.js"
+import "./integration/failing_tests.js"
 import "./reporters/description_reporter.js"
 import "./reporters/error_reporter.js"
 import "./reporters/progress_reporter.js"

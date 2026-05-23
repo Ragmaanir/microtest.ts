@@ -1,5 +1,5 @@
 import { Rand } from "./rand.js";
-import { ProgressReporter, StdoutWriter, SummaryReporter, } from "./reporters.js";
+import { ErrorReporter, ProgressReporter, StdoutWriter, SummaryReporter, } from "./reporters.js";
 import { RunResult, SuiteResult, TestResult, TestStatus } from "./results.js";
 import { Suite } from "./suite.js";
 import { TestCase } from "./test_case.js";
@@ -104,7 +104,7 @@ export class ExecutionContext {
     }
     normalize_reporters(reporters, writer) {
         if (reporters === undefined) {
-            return [new ProgressReporter({}, writer), new SummaryReporter(writer)];
+            return [new ProgressReporter({}, writer), new ErrorReporter(writer), new SummaryReporter(writer)];
         }
         return reporters;
     }
