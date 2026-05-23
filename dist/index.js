@@ -1,4 +1,5 @@
 export { AssertionFailure, assert } from "./assert.js";
+export { BacktraceEntry, BacktraceKind, BacktracePrinter } from "./backtrace_printer.js";
 export { ExecutionContext } from "./execution_context.js";
 export { Rand } from "./rand.js";
 export { DescriptionReporter, DOTS, ErrorReporter, ProgressReporter, SlowTestReporter, SummaryReporter, TICKS, } from "./reporters.js";

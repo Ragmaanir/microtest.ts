@@ -1,4 +1,5 @@
 export { AssertionFailure, assert } from "./assert.js";
+export { BacktraceEntry, BacktraceKind, BacktracePrinter } from "./backtrace_printer.js";
 export type { RunEndEvent, RunStartEvent, SuiteEndEvent, SuiteStartEvent, TestResultEvent, TestStartEvent, } from "./events.js";
 export type { RunOptions } from "./execution_context.js";
 export { ExecutionContext } from "./execution_context.js";

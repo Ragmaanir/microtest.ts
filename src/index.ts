@@ -1,4 +1,5 @@
 export { AssertionFailure, assert } from "./assert.js"
+export { BacktraceEntry, BacktraceKind, BacktracePrinter } from "./backtrace_printer.js"
 export type {
   RunEndEvent,
   RunStartEvent,
