@@ -99,6 +99,10 @@ export class ExecutionContext {
   }
 
   private schedule_run(): void {
+    if (process.env.MICROTEST_DISABLE_AUTO_RUN === "1") {
+      return
+    }
+
     if (this.run_scheduled) {
       return
     }

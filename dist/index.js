@@ -7,7 +7,10 @@ export { RunResult, SuiteResult, TestResult, TestStatus } from "./results.js";
 export { Suite } from "./suite.js";
 export { TestCase } from "./test_case.js";
 import { ExecutionContext } from "./execution_context.js";
-const context = new ExecutionContext();
+const CONTEXT_KEY = "__microtest_context__";
+const microtest_global = globalThis;
+const context = microtest_global[CONTEXT_KEY] ?? new ExecutionContext();
+microtest_global[CONTEXT_KEY] = context;
 export function suite(name, fn) {
     context.suite(name, fn);
 }

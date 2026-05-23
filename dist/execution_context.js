@@ -67,6 +67,9 @@ export class ExecutionContext {
         return this.current_suite;
     }
     schedule_run() {
+        if (process.env.MICROTEST_DISABLE_AUTO_RUN === "1") {
+            return;
+        }
         if (this.run_scheduled) {
             return;
         }
