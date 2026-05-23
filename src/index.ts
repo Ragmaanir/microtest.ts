@@ -31,7 +31,15 @@ import { ExecutionContext, type RunOptions } from "./execution_context.js"
 import type { AroundHookFunction, HookFunction } from "./suite.js"
 import type { TestFunction } from "./test_case.js"
 
-const context = new ExecutionContext()
+const CONTEXT_KEY = "__microtest_context__"
+
+type MicrotestGlobal = typeof globalThis & {
+  __microtest_context__?: ExecutionContext
+}
+
+const microtest_global = globalThis as MicrotestGlobal
+const context = microtest_global[CONTEXT_KEY] ?? new ExecutionContext()
+microtest_global[CONTEXT_KEY] = context
 
 export function suite(name: string, fn: () => void): void {
   context.suite(name, fn)

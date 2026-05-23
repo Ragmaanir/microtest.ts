@@ -7,6 +7,10 @@ settings:
 importers:
 
   .:
+    dependencies:
+      tsx:
+        specifier: ^4.20.5
+        version: 4.22.1
     devDependencies:
       '@biomejs/biome':
         specifier: ^2.2.0
@@ -14,9 +18,6 @@ importers:
       '@types/node':
         specifier: ^24.0.0
         version: 24.12.4
-      tsx:
-        specifier: ^4.20.5
-        version: 4.22.1
       tundra:
         specifier: github:Ragmaanir/tundra
         version: https://codeload.github.com/Ragmaanir/tundra/tar.gz/d3c5729eba0f30ecd1cf3bf87946e1a6dfb25b32
