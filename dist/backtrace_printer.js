@@ -1,4 +1,6 @@
 import path from "node:path";
+import { CYAN, DARK_GRAY, LIGHT_MAGENTA, MAGENTA, YELLOW } from "./color.js";
+import { STDOUT_WRITER } from "./reporters.js";
 export var BacktraceKind;
 (function (BacktraceKind) {
     BacktraceKind["App"] = "app";
@@ -21,11 +23,23 @@ export class BacktraceEntry {
     }
 }
 export class BacktracePrinter {
+    writer;
     static PROJECT_DIR = process.cwd();
     static PROJECT_SRC_DIR = path.join(BacktracePrinter.PROJECT_DIR, "src");
     static PROJECT_TEST_DIR = path.join(BacktracePrinter.PROJECT_DIR, "test");
     static PROJECT_NODE_MODULES_DIR = path.join(BacktracePrinter.PROJECT_DIR, "node_modules");
     static NODE_INTERNAL_PREFIX = "node:";
+    static BACKTRACE_KIND_COLORS = {
+        [BacktraceKind.App]: LIGHT_MAGENTA,
+        [BacktraceKind.Test]: LIGHT_MAGENTA,
+        [BacktraceKind.Lib]: MAGENTA,
+        [BacktraceKind.Node]: DARK_GRAY,
+        [BacktraceKind.Eval]: DARK_GRAY,
+        [BacktraceKind.Unknown]: CYAN,
+    };
+    constructor(writer = STDOUT_WRITER) {
+        this.writer = writer;
+    }
     static classify_path(file_path) {
         if (file_path.startsWith(BacktracePrinter.PROJECT_SRC_DIR)) {
             return BacktraceKind.App;
@@ -61,10 +75,9 @@ export class BacktracePrinter {
                 return [kind, `???: ${file_path}`];
         }
     }
-    call(backtrace, highlight) {
+    async call(backtrace, highlight) {
         const entries = this.simplify(backtrace);
-        const lines = entries.map((entry) => this.format_entry(entry, highlight));
-        return this.grouped_lines(lines);
+        await this.write_grouped_entries(entries, highlight);
     }
     simplify(backtrace) {
         const entries = [];
@@ -95,24 +108,32 @@ export class BacktracePrinter {
         }
         return file;
     }
-    format_entry(entry, highlight) {
-        const func = highlight !== undefined && entry.func.includes(highlight) ? `**${entry.func}**` : entry.func;
-        return `${entry.path}:${entry.line} ${func}`;
-    }
-    grouped_lines(lines) {
-        if (lines.length === 0) {
-            return "";
+    async write_grouped_entries(entries, highlight) {
+        for (let index = 0; index < entries.length; index += 1) {
+            const entry = entries[index];
+            const marker = this.line_marker(index, entries.length);
+            await this.writer.write(`${marker} `, DARK_GRAY);
+            await this.writer.write(entry.path, BacktracePrinter.BACKTRACE_KIND_COLORS[entry.kind]);
+            await this.writer.write(`:${entry.line} `, DARK_GRAY);
+            await this.writer.writeln(entry.func, this.func_color(entry, highlight));
         }
-        return `${lines
-            .map((line, index) => {
-            if (index === 0) {
-                return `┏ ${line}`;
-            }
-            if (index === lines.length - 1) {
-                return `┗ ${line}`;
-            }
-            return `┃ ${line}`;
-        })
-            .join("\n")}\n`;
+    }
+    line_marker(index, length) {
+        if (index === 0) {
+            return "┏";
+        }
+        if (index === length - 1) {
+            return "┗";
+        }
+        return "┃";
+    }
+    func_color(entry, highlight) {
+        if (highlight !== undefined && entry.func.includes(highlight)) {
+            return YELLOW;
+        }
+        if (entry.kind === BacktraceKind.App || entry.kind === BacktraceKind.Test) {
+            return YELLOW;
+        }
+        return DARK_GRAY;
     }
 }

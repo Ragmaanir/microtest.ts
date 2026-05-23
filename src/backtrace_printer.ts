@@ -1,4 +1,7 @@
 import path from "node:path"
+import { CYAN, DARK_GRAY, LIGHT_MAGENTA, MAGENTA, type RGB, YELLOW } from "./color.js"
+import { STDOUT_WRITER } from "./reporters.js"
+import type { Writer } from "./writer.js"
 
 export enum BacktraceKind {
   App = "app",
@@ -24,6 +27,16 @@ export class BacktracePrinter {
   static readonly PROJECT_TEST_DIR = path.join(BacktracePrinter.PROJECT_DIR, "test")
   static readonly PROJECT_NODE_MODULES_DIR = path.join(BacktracePrinter.PROJECT_DIR, "node_modules")
   static readonly NODE_INTERNAL_PREFIX = "node:"
+  static readonly BACKTRACE_KIND_COLORS: Record<BacktraceKind, RGB> = {
+    [BacktraceKind.App]: LIGHT_MAGENTA,
+    [BacktraceKind.Test]: LIGHT_MAGENTA,
+    [BacktraceKind.Lib]: MAGENTA,
+    [BacktraceKind.Node]: DARK_GRAY,
+    [BacktraceKind.Eval]: DARK_GRAY,
+    [BacktraceKind.Unknown]: CYAN,
+  }
+
+  constructor(private readonly writer: Writer = STDOUT_WRITER) {}
 
   static classify_path(file_path: string): BacktraceKind {
     if (file_path.startsWith(BacktracePrinter.PROJECT_SRC_DIR)) {
@@ -68,11 +81,10 @@ export class BacktracePrinter {
     }
   }
 
-  call(backtrace: readonly string[], highlight?: string): string {
+  async call(backtrace: readonly string[], highlight?: string): Promise<void> {
     const entries = this.simplify(backtrace)
-    const lines = entries.map((entry) => this.format_entry(entry, highlight))
 
-    return this.grouped_lines(lines)
+    await this.write_grouped_entries(entries, highlight)
   }
 
   simplify(backtrace: readonly string[]): BacktraceEntry[] {
@@ -114,29 +126,39 @@ export class BacktracePrinter {
     return file
   }
 
-  private format_entry(entry: BacktraceEntry, highlight?: string): string {
-    const func = highlight !== undefined && entry.func.includes(highlight) ? `**${entry.func}**` : entry.func
+  private async write_grouped_entries(entries: readonly BacktraceEntry[], highlight?: string): Promise<void> {
+    for (let index = 0; index < entries.length; index += 1) {
+      const entry = entries[index]!
+      const marker = this.line_marker(index, entries.length)
 
-    return `${entry.path}:${entry.line} ${func}`
+      await this.writer.write(`${marker} `, DARK_GRAY)
+      await this.writer.write(entry.path, BacktracePrinter.BACKTRACE_KIND_COLORS[entry.kind])
+      await this.writer.write(`:${entry.line} `, DARK_GRAY)
+      await this.writer.writeln(entry.func, this.func_color(entry, highlight))
+    }
   }
 
-  private grouped_lines(lines: readonly string[]): string {
-    if (lines.length === 0) {
-      return ""
+  private line_marker(index: number, length: number): string {
+    if (index === 0) {
+      return "┏"
     }
 
-    return `${lines
-      .map((line, index) => {
-        if (index === 0) {
-          return `┏ ${line}`
-        }
+    if (index === length - 1) {
+      return "┗"
+    }
 
-        if (index === lines.length - 1) {
-          return `┗ ${line}`
-        }
+    return "┃"
+  }
 
-        return `┃ ${line}`
-      })
-      .join("\n")}\n`
+  private func_color(entry: BacktraceEntry, highlight?: string): RGB {
+    if (highlight !== undefined && entry.func.includes(highlight)) {
+      return YELLOW
+    }
+
+    if (entry.kind === BacktraceKind.App || entry.kind === BacktraceKind.Test) {
+      return YELLOW
+    }
+
+    return DARK_GRAY
   }
 }
