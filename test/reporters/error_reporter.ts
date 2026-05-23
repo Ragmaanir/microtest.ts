@@ -8,6 +8,8 @@ suite("ErrorReporter", () => {
 
     await reporter.run_end({ result: run_result() })
 
-    assert.equal(writer.output, "Reporter#fails: failed\nReporter#errors: errored\n")
+    assert(writer.output.includes("Reporter#fails: Error: failed"))
+    assert(writer.output.includes("Reporter#errors: Error: errored"))
+    assert(/test[\\/]reporters[\\/]helpers\.ts/.test(writer.output))
   })
 })
