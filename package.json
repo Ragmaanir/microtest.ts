@@ -25,7 +25,7 @@
     "check": "biome check . && tsc --noEmit",
     "format": "biome format --write .",
     "lint": "biome lint .",
-    "test": "tsx test/index.ts",
+    "test": "tsx src/cli.ts test",
     "typecheck": "tsc --noEmit"
   },
   "packageManager": "pnpm@10.26.1",

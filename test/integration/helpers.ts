@@ -8,7 +8,7 @@ export interface IntegrationResult {
 }
 
 export function run_fixture(path: string): IntegrationResult {
-  const result = spawnSync(`pnpm exec tsx ${path}`, {
+  const result = spawnSync(`pnpm exec tsx src/cli.ts ${path}`, {
     encoding: "utf8",
     env: {
       ...process.env,
