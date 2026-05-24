@@ -1,3 +1,4 @@
+import { isDeepStrictEqual } from "node:util";
 export class AssertionFailure extends Error {
     name = "AssertionFailure";
 }
@@ -23,11 +24,31 @@ export function assert(condition) {
 }
 (function (assert) {
     function equal(actual, expected) {
-        if (!Object.is(actual, expected)) {
-            throw new AssertionFailure(`expected ${format_value(actual)} to equal ${format_value(expected)}`);
+        if (!isDeepStrictEqual(actual, expected)) {
+            fail(`expected ${format_value(actual)} to equal ${format_value(expected)}`);
         }
     }
     assert.equal = equal;
+    function fail(message) {
+        throw new AssertionFailure(message);
+    }
+    assert.fail = fail;
+    function instance(value, expected) {
+        if (!(value instanceof expected)) {
+            fail(`expected ${format_value(value)} to be an instance of ${expected.name}`);
+        }
+    }
+    assert.instance = instance;
+    function is(actual, expected) {
+        if (!Object.is(actual, expected)) {
+            fail(`expected ${format_value(actual)} to be ${format_value(expected)}`);
+        }
+    }
+    assert.is = is;
+    function ok(value) {
+        assert(value);
+    }
+    assert.ok = ok;
     function throws(fn, expected) {
         try {
             fn();
@@ -36,9 +57,13 @@ export function assert(condition) {
             if (expected === undefined || matches_error(error, expected)) {
                 return;
             }
-            throw new AssertionFailure("thrown error did not match expectation");
+            fail("thrown error did not match expectation");
         }
-        throw new AssertionFailure("expected function to throw");
+        fail("expected function to throw");
     }
     assert.throws = throws;
+    function unreachable() {
+        fail("unreachable");
+    }
+    assert.unreachable = unreachable;
 })(assert || (assert = {}));
