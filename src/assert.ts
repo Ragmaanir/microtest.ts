@@ -1,8 +1,11 @@
+import { isDeepStrictEqual } from "node:util"
+
 export class AssertionFailure extends Error {
   override readonly name = "AssertionFailure"
 }
 
 export type ErrorClass = new (...args: never[]) => Error
+export type InstanceClass<T = unknown> = new (...args: never[]) => T
 
 function format_value(value: unknown): string {
   if (typeof value === "string") {
@@ -32,9 +35,29 @@ export function assert(condition: unknown): asserts condition {
 
 export namespace assert {
   export function equal<T>(actual: T, expected: T): void {
-    if (!Object.is(actual, expected)) {
-      throw new AssertionFailure(`expected ${format_value(actual)} to equal ${format_value(expected)}`)
+    if (!isDeepStrictEqual(actual, expected)) {
+      fail(`expected ${format_value(actual)} to equal ${format_value(expected)}`)
     }
+  }
+
+  export function fail(message: string): never {
+    throw new AssertionFailure(message)
+  }
+
+  export function instance<T>(value: unknown, expected: InstanceClass<T>): asserts value is T {
+    if (!(value instanceof expected)) {
+      fail(`expected ${format_value(value)} to be an instance of ${expected.name}`)
+    }
+  }
+
+  export function is(actual: unknown, expected: unknown): void {
+    if (!Object.is(actual, expected)) {
+      fail(`expected ${format_value(actual)} to be ${format_value(expected)}`)
+    }
+  }
+
+  export function ok(value: unknown): asserts value {
+    assert(value)
   }
 
   export function throws(fn: () => unknown, expected?: RegExp | string | ErrorClass): void {
@@ -45,9 +68,13 @@ export namespace assert {
         return
       }
 
-      throw new AssertionFailure("thrown error did not match expectation")
+      fail("thrown error did not match expectation")
     }
 
-    throw new AssertionFailure("expected function to throw")
+    fail("expected function to throw")
+  }
+
+  export function unreachable(): never {
+    fail("unreachable")
   }
 }

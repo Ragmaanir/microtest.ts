@@ -17,4 +17,21 @@ suite("ProgressReporter", () => {
       `${DOTS[TestStatus.Passed]}${DOTS[TestStatus.Failed]}${DOTS[TestStatus.Errored]}${DOTS[TestStatus.Skipped]}\n`,
     )
   })
+
+  test("#test_result uses configurable symbols", async () => {
+    const writer = new MemoryWriter()
+    const reporter = new ProgressReporter({ symbols: { ...DOTS, [TestStatus.Passed]: "P" } }, writer)
+
+    await reporter.test_result({
+      result: {
+        suite_name: "Thing",
+        test_name: "#works",
+        full_name: "Thing#works",
+        status: TestStatus.Passed,
+        duration_ms: 0,
+      },
+    })
+
+    assert.equal(writer.output, "P")
+  })
 })
