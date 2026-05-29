@@ -1,5 +1,6 @@
 import path from "node:path"
 import { CYAN, DARK_GRAY, LIGHT_MAGENTA, MAGENTA, type RGB, YELLOW } from "./color.js"
+import { Path } from "./path.js"
 import { STDOUT_WRITER } from "./reporters.js"
 import type { Writer } from "./writer.js"
 
@@ -26,6 +27,7 @@ export class BacktracePrinter {
   static readonly PROJECT_SRC_DIR = path.join(BacktracePrinter.PROJECT_DIR, "src")
   static readonly PROJECT_TEST_DIR = path.join(BacktracePrinter.PROJECT_DIR, "test")
   static readonly PROJECT_NODE_MODULES_DIR = path.join(BacktracePrinter.PROJECT_DIR, "node_modules")
+  static readonly NODE_MODULES_DIR_NAME = "node_modules"
   static readonly NODE_INTERNAL_PREFIX = "node:"
   static readonly BACKTRACE_KIND_COLORS: Record<BacktraceKind, RGB> = {
     [BacktraceKind.App]: LIGHT_MAGENTA,
@@ -39,15 +41,15 @@ export class BacktracePrinter {
   constructor(private readonly writer: Writer = STDOUT_WRITER) {}
 
   static classify_path(file_path: string): BacktraceKind {
-    if (file_path.startsWith(BacktracePrinter.PROJECT_SRC_DIR)) {
+    if (Path.starts_with(file_path, BacktracePrinter.PROJECT_SRC_DIR)) {
       return BacktraceKind.App
     }
 
-    if (file_path.startsWith(BacktracePrinter.PROJECT_TEST_DIR)) {
+    if (Path.starts_with(file_path, BacktracePrinter.PROJECT_TEST_DIR)) {
       return BacktraceKind.Test
     }
 
-    if (file_path.startsWith(BacktracePrinter.PROJECT_NODE_MODULES_DIR)) {
+    if (Path.segment_index(file_path, BacktracePrinter.NODE_MODULES_DIR_NAME) !== null) {
       return BacktraceKind.Lib
     }
 
@@ -67,11 +69,11 @@ export class BacktracePrinter {
 
     switch (kind) {
       case BacktraceKind.App:
-        return [kind, file_path.replace(BacktracePrinter.PROJECT_SRC_DIR, "APP: src")]
+        return [kind, Path.replace_prefix(file_path, BacktracePrinter.PROJECT_SRC_DIR, "APP: src")]
       case BacktraceKind.Test:
-        return [kind, file_path.replace(BacktracePrinter.PROJECT_TEST_DIR, "TEST: test")]
+        return [kind, Path.replace_prefix(file_path, BacktracePrinter.PROJECT_TEST_DIR, "TEST: test")]
       case BacktraceKind.Lib:
-        return [kind, file_path.replace(BacktracePrinter.PROJECT_NODE_MODULES_DIR, "LIB: node_modules")]
+        return [kind, BacktracePrinter.simplify_node_modules_path(file_path)]
       case BacktraceKind.Node:
         return [kind, `NODE: ${file_path}`]
       case BacktraceKind.Eval:
@@ -79,6 +81,16 @@ export class BacktracePrinter {
       case BacktraceKind.Unknown:
         return [kind, `???: ${file_path}`]
     }
+  }
+
+  private static simplify_node_modules_path(file_path: string): string {
+    const index = Path.segment_index(file_path, BacktracePrinter.NODE_MODULES_DIR_NAME)
+
+    if (index === null) {
+      return `???: ${file_path}`
+    }
+
+    return `LIB: ${file_path.slice(index)}`
   }
 
   async call(backtrace: readonly string[], highlight?: string): Promise<void> {

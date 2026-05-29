@@ -1,5 +1,5 @@
 import path from "node:path"
-import { assert, BacktracePrinter, suite, test, type Writer } from "../src/index.js"
+import { assert, BacktraceKind, BacktracePrinter, suite, test, type Writer } from "../src/index.js"
 
 class MemoryWriter implements Writer {
   output = ""
@@ -67,5 +67,18 @@ suite("BacktracePrinter", () => {
     await printer.call(["    at mystery (/tmp/outside.ts:1:2)"])
 
     assert(writer.output.includes("???: /tmp/outside.ts:1 mystery"))
+  })
+
+  test(".simplify_path detects pnpm workspace node_modules paths", () => {
+    const dependency_path =
+      "C:/Users/LF/workspaces/dev/sandhed/node_modules/.pnpm/microtest.ts@https+++codelo_hash/node_modules/microtest.ts/dist/cli.js"
+
+    const [kind, simple_path] = BacktracePrinter.simplify_path(dependency_path)
+
+    assert.equal(kind, BacktraceKind.Lib)
+    assert.equal(
+      simple_path,
+      "LIB: node_modules/.pnpm/microtest.ts@https+++codelo_hash/node_modules/microtest.ts/dist/cli.js",
+    )
   })
 })
