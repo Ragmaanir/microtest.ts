@@ -10,6 +10,7 @@ export type {
 } from "./events.js"
 export type { RunOptions } from "./execution_context.js"
 export { ExecutionContext } from "./execution_context.js"
+export { Path } from "./path.js"
 export { Rand } from "./rand.js"
 export type { Reporter, ResultSymbols, Writer } from "./reporters.js"
 export {

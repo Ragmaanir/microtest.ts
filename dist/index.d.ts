@@ -3,6 +3,7 @@ export { BacktraceEntry, BacktraceKind, BacktracePrinter } from "./backtrace_pri
 export type { RunEndEvent, RunStartEvent, SuiteEndEvent, SuiteStartEvent, TestResultEvent, TestStartEvent, } from "./events.js";
 export type { RunOptions } from "./execution_context.js";
 export { ExecutionContext } from "./execution_context.js";
+export { Path } from "./path.js";
 export { Rand } from "./rand.js";
 export type { Reporter, ResultSymbols, Writer } from "./reporters.js";
 export { DescriptionReporter, DOTS, ErrorReporter, ProgressReporter, SlowTestReporter, SummaryReporter, TICKS, } from "./reporters.js";
